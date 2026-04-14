@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026年快递仓储优化方案 · 哈尔斯</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#0c0f14;--surface:#151921;--surface2:#1c2230;--border:rgba(255,255,255,0.06);--text:#e8e6e1;--text2:#8a8d95;--text3:#555962;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--teal:#14b8a6;--purple:#a78bfa;--cn:'Noto Sans SC',sans-serif;--num:'DM Sans',sans-serif;--r:12px;--r-sm:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--cn);-webkit-font-smoothing:antialiased}
+.page{min-height:100vh;padding:3rem 4rem;position:relative;page-break-after:always}
+.page-num{position:absolute;bottom:2rem;right:4rem;font-family:var(--num);font-size:.75rem;color:var(--text3)}
+.brand-tag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:2rem}
+.brand-tag::before{content:'';width:20px;height:1px;background:var(--accent)}
+h1.hero{font-size:3.2rem;font-weight:900;line-height:1.2;letter-spacing:-.03em;margin-bottom:1rem}
+h1.hero span{color:var(--accent)}
+.hero-sub{font-size:1.1rem;color:var(--text2);font-weight:300;max-width:640px;line-height:1.7}
+h2.section-title{font-size:1.6rem;font-weight:700;margin-bottom:1.5rem;letter-spacing:-.02em;display:flex;align-items:center;gap:12px}
+h2.section-title .num{font-family:var(--num);font-size:.8rem;font-weight:700;color:var(--accent);background:rgba(59,130,246,.12);padding:4px 10px;border-radius:4px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:2rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:1.2rem 1rem;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.kpi.blue::after{background:var(--accent)}.kpi.green::after{background:var(--green)}.kpi.amber::after{background:var(--amber)}.kpi.red::after{background:var(--red)}.kpi.teal::after{background:var(--teal)}.kpi.purple::after{background:var(--purple)}
+.kpi-label{font-size:.72rem;color:var(--text3);margin-bottom:6px}
+.kpi-val{font-family:var(--num);font-size:1.5rem;font-weight:700}
+.kpi-note{font-size:.7rem;color:var(--text2);margin-top:4px;font-family:var(--num)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.chart-wrap{position:relative;width:100%}
+.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;position:relative}
+.mode-card.recommended{border-color:var(--green);box-shadow:0 0 30px rgba(34,197,94,.08)}
+.mode-card .badge{position:absolute;top:-1px;right:20px;font-size:.65rem;font-weight:700;letter-spacing:.1em;padding:4px 12px;border-radius:0 0 6px 6px}
+.badge-green{background:var(--green);color:#000}.badge-amber{background:var(--amber);color:#000}.badge-red{background:rgba(239,68,68,.15);color:var(--red)}
+.mode-title{font-size:1rem;font-weight:700;margin-bottom:.75rem}
+.mode-total{font-family:var(--num);font-size:2rem;font-weight:700;margin-bottom:.3rem}
+.mode-unit{font-family:var(--num);font-size:.85rem;color:var(--text2);margin-bottom:1rem}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.cost-row:last-child{border-bottom:none}
+.cost-label{color:var(--text2)}.cost-val{font-family:var(--num);font-weight:500}
+.save-tag{display:inline-block;font-family:var(--num);font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:8px}
+.save-positive{background:rgba(34,197,94,.12);color:var(--green)}
+.bar-compare{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.bar-label{width:100px;font-size:.78rem;color:var(--text2);text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:28px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:10px;font-family:var(--num);font-size:.72rem;font-weight:700;color:#fff;white-space:nowrap}
+.timeline{display:flex;gap:0;margin-top:1.5rem}
+.tl-item{flex:1;padding:1rem;border-left:2px solid var(--accent);position:relative}
+.tl-item::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--accent);position:absolute;left:-6px;top:1rem}
+.tl-phase{font-family:var(--num);font-size:.65rem;color:var(--accent);letter-spacing:.1em;font-weight:700;margin-bottom:4px}
+.tl-title{font-size:.85rem;font-weight:700;margin-bottom:4px}
+.tl-desc{font-size:.72rem;color:var(--text2);line-height:1.5}
+.space-card{background:var(--surface2);border-radius:var(--r-sm);padding:1rem 1.2rem;margin-bottom:8px}
+.space-title{font-size:.78rem;font-weight:500;margin-bottom:6px}
+.space-row{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text2);padding:3px 0}
+.space-row span:last-child{font-family:var(--num);color:var(--text);font-weight:500}
+.principle-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:1.5rem}
+.principle{background:var(--surface2);border-radius:var(--r-sm);padding:1.2rem;border-top:2px solid var(--accent)}
+.principle h4{font-size:.85rem;margin-bottom:.4rem}
+.principle p{font-size:.72rem;color:var(--text2);line-height:1.5}
+.footnote{font-size:.7rem;color:var(--text3);margin-top:2rem;border-top:1px solid var(--border);padding-top:1rem;line-height:1.7}
+.calc-note{font-size:.68rem;color:var(--text3);font-style:italic;margin-top:4px;line-height:1.4}
+.req-box{margin-top:12px;padding:10px 12px;background:rgba(59,130,246,.08);border-radius:var(--r-sm);border-left:3px solid var(--accent);border-radius:0;font-size:.72rem;color:var(--accent)}
+@media print{body{background:#fff;color:#111}.page{padding:2rem}.card,.mode-card,.kpi{border:1px solid #ddd;background:#f9f9f9}}
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE 1: COVER ===== -->
+<div class="page" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="brand-tag">哈尔斯 · 仓储物流</div>
+  <h1 class="hero">2026年快递仓储<br><span>集中发货优化方案</span></h1>
+  <p class="hero-sub" style="margin-bottom:3rem;">基于2025年192万单实际运营数据，测算2026年400万单目标下三种发货模式的全成本对比，推荐永康集中发货方案，预计较现有模式年节省<strong style="color:var(--green)">¥662万</strong>。</p>
+  <div class="kpi-row" style="max-width:800px;">
+    <div class="kpi blue">
+      <div class="kpi-label">2025年实际单量</div>
+      <div class="kpi-val">1,920,181</div>
+      <div class="kpi-note">四家快递合计</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">2026年目标单量</div>
+      <div class="kpi-val">4,000,000</div>
+      <div class="kpi-note">+108% YoY</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">推荐方案 vs 现有模式</div>
+      <div class="kpi-val" style="color:var(--green)">¥662万</div>
+      <div class="kpi-note">年节省 -37.6%</div>
+    </div>
+  </div>
+  <div style="font-size:.75rem;color:var(--text3);margin-top:auto;">
+    数据来源：快递费用全年汇总、云仓配件月度明细、3/31库存盘点、临安人工成本<br>
+    汇报时间：2026年4月
+  </div>
+  <div class="page-num">01 / 05</div>
+</div>
+
+<!-- ===== PAGE 2: 2025 ACTUAL ===== -->
+<div class="page">
+  <div class="brand-tag">现状分析</div>
+  <h2 class="section-title"><span class="num">01</span> 2025年仓储物流全成本结构</h2>
+  <div class="kpi-row">
+    <div class="kpi blue">
+      <div class="kpi-label">总快递费</div>
+      <div class="kpi-val">¥588.8万</div>
+      <div class="kpi-note">均/单 ¥3.07</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-label">总操作费</div>
+      <div class="kpi-val">¥208.2万</div>
+      <div class="kpi-note">均/单 ¥1.08</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">云仓仓储费</div>
+      <div class="kpi-val">¥23.7万</div>
+      <div class="kpi-note">永康云仓</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">调拨费</div>
+      <div class="kpi-val">¥10.6万</div>
+      <div class="kpi-note">442,848只</div>
+    </div>
+    <div class="kpi teal">
+      <div class="kpi-label">供应商→临安物流溢价</div>
+      <div class="kpi-val">¥5.0万</div>
+      <div class="kpi-note">25万单 × ¥0.2</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">全年物流总成本</div>
+      <div class="kpi-val">¥836.3万</div>
+      <div class="kpi-note">均/单 ¥4.36</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:16px;color:var(--text2)">按仓库类型费用构成</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="pie1"></canvas></div>
+    </div>
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:16px;color:var(--text2)">各快递公司均/单成本对比（元）</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="bar1"></canvas></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <div style="font-size:.85rem;font-weight:500;margin-bottom:12px;color:var(--text2)">2025年成本结构痛点</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <div style="background:var(--surface2);padding:1rem;border-left:3px solid var(--red);border-radius:0">
+        <div style="font-size:.8rem;font-weight:700;margin-bottom:4px">两地分仓 → 单量分散</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5">永康58.5% + 临安41.5%，单量无法集中议价，快递单价偏高</div>
+      </div>
+      <div style="background:var(--surface2);padding:1rem;border-left:3px solid var(--amber);border-radius:0">
+        <div style="font-size:.8rem;font-weight:700;margin-bottom:4px">跨地调拨 → 额外支出</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5">年调拨44.3万只，调拨费¥10.6万 + 仓储费¥23.7万 = ¥34.3万隐性成本</div>
+      </div>
+      <div style="background:var(--surface2);padding:1rem;border-left:3px solid var(--purple);border-radius:0">
+        <div style="font-size:.8rem;font-weight:700;margin-bottom:4px">远离产业带 → 物流溢价</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5">永康供应商发货至临安额外承担 ¥0.2/单 物流溢价，年 ¥5万</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">02 / 06</div>
+</div>
+
+<!-- ===== PAGE 3: 月度看板 ===== -->
+<div class="page">
+  <div class="brand-tag">月度明细</div>
+  <h2 class="section-title"><span class="num">02</span> 2025年月度运营数据看板</h2>
+
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-size:.85rem;font-weight:500;margin-bottom:12px;color:var(--text2)">月度发货单量 &amp; 快递费趋势</div>
+    <div style="display:flex;gap:16px;margin-bottom:8px;font-size:.75rem;color:var(--text2)">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(59,130,246,.6)"></span>发货单量（左轴）</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:20px;height:2px;background:#f59e0b"></span>快递费（右轴）</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:20px;height:2px;background:#a78bfa"></span>操作费（右轴）</span>
+    </div>
+    <div class="chart-wrap" style="height:260px"><canvas id="mTicketExpress"></canvas></div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:16px">
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:12px;color:var(--text2)">月度调拨费用（元）&amp; 调拨件数</div>
+      <div style="display:flex;gap:16px;margin-bottom:8px;font-size:.75rem;color:var(--text2)">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(239,68,68,.6)"></span>调拨费（左轴）</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:20px;height:2px;background:#f59e0b;border-top:2px dashed #f59e0b"></span>调拨件数（右轴）</span>
+      </div>
+      <div class="chart-wrap" style="height:220px"><canvas id="mDiaobo"></canvas></div>
+    </div>
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:12px;color:var(--text2)">云仓月度仓储费（元）</div>
+      <div class="chart-wrap" style="height:250px"><canvas id="mStorage"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:.85rem;font-weight:500;margin-bottom:8px;color:var(--text2)">月度数据明细</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.75rem;font-family:var(--num)">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="text-align:left;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem">月份</th>
+            <th style="text-align:right;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem">发货单量</th>
+            <th style="text-align:right;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem">快递费</th>
+            <th style="text-align:right;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem">操作费</th>
+            <th style="text-align:right;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem">调拨费</th>
+            <th style="text-align:right;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem">调拨件数</th>
+            <th style="text-align:right;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem">仓储费</th>
+            <th style="text-align:right;padding:8px 6px;font-family:var(--cn);font-weight:500;color:var(--text3);font-size:.7rem;color:var(--accent)">月度合计</th>
+          </tr>
+        </thead>
+        <tbody id="mTableBody"></tbody>
+        <tfoot id="mTableFoot"></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-num">03 / 06</div>
+</div>
+
+<!-- ===== PAGE 4: 三模式对比 ===== -->
+<div class="page">
+  <div class="brand-tag">方案对比</div>
+  <h2 class="section-title"><span class="num">03</span> 2026年三种发货模式全成本测算（400万单）</h2>
+  <div class="three-col" style="margin-bottom:1.5rem;">
+
+    <!-- MODE 1 -->
+    <div class="mode-card">
+      <div class="badge badge-red">现有模式</div>
+      <div class="mode-title" style="margin-top:8px">模式一 · 两地分仓发货</div>
+      <div class="mode-total" style="color:var(--red)">¥1,762万</div>
+      <div class="mode-unit">均/单 ¥4.40</div>
+      <div class="cost-row"><span class="cost-label">快递费</span><span class="cost-val">¥1,225.7万</span></div>
+      <div class="cost-row"><span class="cost-label">　永康 234万单 × ¥2.94</span><span class="cost-val">¥688.6万</span></div>
+      <div class="cost-row"><span class="cost-label">　临安 166万单 × ¥3.24</span><span class="cost-val">¥537.2万</span></div>
+      <div class="cost-row"><span class="cost-label">操作费</span><span class="cost-val">¥434.1万</span></div>
+      <div class="cost-row"><span class="cost-label">　永康 234万 × ¥1.11</span><span class="cost-val">¥260.0万</span></div>
+      <div class="cost-row"><span class="cost-label">　临安 166万 × ¥1.05</span><span class="cost-val">¥174.1万</span></div>
+      <div class="cost-row"><span class="cost-label">仓储费（永康云仓）</span><span class="cost-val">¥47.4万</span></div>
+      <div class="calc-note">2025年实际 ¥23.7万 × 2（单量翻倍）</div>
+      <div class="cost-row"><span class="cost-label">调拨费</span><span class="cost-val">¥21.2万</span></div>
+      <div class="calc-note">2025年实际 ¥10.6万 × 2（单量翻倍）</div>
+      <div class="cost-row"><span class="cost-label">供应商→临安物流溢价</span><span class="cost-val">¥33.2万</span></div>
+      <div class="calc-note">临安单量166万 × ¥0.2/单</div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        <div style="font-size:.72rem;color:var(--text3)">基准方案 · 按2025年两地58.5%/41.5%比例测算</div>
+      </div>
+    </div>
+
+    <!-- MODE 2 -->
+    <div class="mode-card">
+      <div class="badge badge-amber">次选方案</div>
+      <div class="mode-title" style="margin-top:8px">模式二 · 全部集中临安</div>
+      <div class="mode-total" style="color:var(--amber)">¥1,332万</div>
+      <div class="mode-unit">均/单 ¥3.33 <span class="save-tag save-positive">vs模式一 省¥430万</span></div>
+      <div class="cost-row"><span class="cost-label">快递费 400万 × ¥2.3</span><span class="cost-val">¥920.0万</span></div>
+      <div class="cost-row"><span class="cost-label">操作费 400万 × ¥0.85</span><span class="cost-val">¥340.0万</span></div>
+      <div class="cost-row"><span class="cost-label">供应商→临安物流溢价</span><span class="cost-val">¥72.0万</span></div>
+      <div class="calc-note">400万单 × 90%永康供应商 × ¥0.2/单</div>
+      <div class="cost-row"><span class="cost-label">仓储费</span><span class="cost-val">¥0</span></div>
+      <div class="cost-row"><span class="cost-label">调拨费</span><span class="cost-val">¥0</span></div>
+      <div class="req-box">准入要求：快递单量 ≥ 25万单/月，预充值 50万元</div>
+      <div style="margin-top:8px;font-size:.72rem;color:var(--text3)">集中议价降快递费，但全量承担物流溢价¥72万</div>
+    </div>
+
+    <!-- MODE 3 -->
+    <div class="mode-card recommended">
+      <div class="badge badge-green">推荐方案</div>
+      <div class="mode-title" style="margin-top:8px;color:var(--green)">模式三 · 全部集中永康</div>
+      <div class="mode-total" style="color:var(--green)">¥1,100万</div>
+      <div class="mode-unit">均/单 ¥2.75 <span class="save-tag save-positive">vs模式一 省¥662万</span></div>
+      <div class="cost-row"><span class="cost-label">快递费 400万 × ¥1.9</span><span class="cost-val">¥760.0万</span></div>
+      <div class="cost-row"><span class="cost-label">操作费 400万 × ¥0.85</span><span class="cost-val">¥340.0万</span></div>
+      <div class="cost-row"><span class="cost-label">供应商→永康物流溢价</span><span class="cost-val">¥0</span></div>
+      <div class="calc-note">产业带集群，供应商本地直发</div>
+      <div class="cost-row"><span class="cost-label">仓储费</span><span class="cost-val">¥0</span></div>
+      <div class="cost-row"><span class="cost-label">调拨费</span><span class="cost-val">¥0</span></div>
+      <div class="req-box">准入要求：快递单量 ≥ 25万单/月，预充值 50万元</div>
+      <div style="margin-top:8px;font-size:.72rem;color:var(--green)">产业带快递最优价 + 零物流溢价 + 零调拨 + 零仓储</div>
+    </div>
+  </div>
+
+  <!-- Bar comparison -->
+  <div class="card">
+    <div style="font-size:.85rem;font-weight:500;margin-bottom:16px;color:var(--text2)">三种模式总成本对比</div>
+    <div class="bar-compare">
+      <div class="bar-label">模式一 两地</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#dc2626,#ef4444)">¥1,762万</div></div>
+    </div>
+    <div class="bar-compare">
+      <div class="bar-label">模式二 临安</div>
+      <div class="bar-track"><div class="bar-fill" style="width:75.6%;background:linear-gradient(90deg,#d97706,#f59e0b)">¥1,332万　<span style="opacity:.7">-24.4%</span></div></div>
+    </div>
+    <div class="bar-compare">
+      <div class="bar-label">模式三 永康</div>
+      <div class="bar-track"><div class="bar-fill" style="width:62.4%;background:linear-gradient(90deg,#16a34a,#22c55e)">¥1,100万　<span style="opacity:.7">-37.6%</span></div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+      <div style="font-size:.78rem;color:var(--text2)">永康 vs 现有两地：<strong style="color:var(--green)">年节省 ¥662万</strong></div>
+      <div style="font-size:.78rem;color:var(--text2)">永康 vs 临安集中：<strong style="color:var(--green)">年节省 ¥232万</strong></div>
+    </div>
+  </div>
+  <div class="page-num">04 / 06</div>
+</div>
+
+<!-- ===== PAGE 4: 费用分拆 & 优势 ===== -->
+<div class="page">
+  <div class="brand-tag">费用分拆</div>
+  <h2 class="section-title"><span class="num">04</span> 各项费用逐项对比 &amp; 永康方案核心优势</h2>
+  <div class="two-col" style="margin-bottom:20px">
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:16px;color:var(--text2)">快递费对比（万元）</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="barExpress"></canvas></div>
+    </div>
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:16px;color:var(--text2)">操作费对比（万元）</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="barOp"></canvas></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div style="font-size:.85rem;font-weight:500;margin-bottom:16px;color:var(--text2)">均/单综合成本拆解（元/单）</div>
+    <div class="chart-wrap" style="height:240px"><canvas id="stackedUnit"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:.85rem;font-weight:500;margin-bottom:12px;color:var(--text2)">永康方案四大核心优势</div>
+    <div class="principle-grid">
+      <div class="principle" style="border-top-color:var(--green)">
+        <h4 style="color:var(--green)">① 快递集中议价</h4>
+        <p>400万单集中永康单一仓发货，快递单价 ¥1.9/单 vs 两地加权 ¥3.06/单。快递费直降 ¥465万，单量越大议价空间越大。</p>
+      </div>
+      <div class="principle" style="border-top-color:var(--teal)">
+        <h4 style="color:var(--teal)">② 产业带集群效应</h4>
+        <p>永康是哈尔斯供应商聚集地，本地发货零物流溢价。供应商近在咫尺，方便售后对接：<strong>售后产品可直接找供应商抵扣货款</strong>，减少退换货周转成本。</p>
+      </div>
+      <div class="principle" style="border-top-color:var(--accent)">
+        <h4 style="color:var(--accent)">③ 电商集群时效优势</h4>
+        <p>永康是全国知名电商产业带，快递公司在永康设有中转中心，<strong>电商物流中转时效更高</strong>，发货速度优于临安，提升消费者体验和店铺评分。</p>
+      </div>
+      <div class="principle" style="border-top-color:var(--amber)">
+        <h4 style="color:var(--amber)">④ 消除两地调拨</h4>
+        <p>取消永康↔临安双向调拨，年省调拨费 ¥21.2万 + 云仓仓储费 ¥47.4万 = <strong>¥68.6万</strong>隐性成本归零。同时消除调拨导致的库存错配风险。</p>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">05 / 06</div>
+</div>
+
+<!-- ===== PAGE 5: 实施 ===== -->
+<div class="page">
+  <div class="brand-tag">实施方案</div>
+  <h2 class="section-title"><span class="num">05</span> 永康仓储空间规划 &amp; 实施路径</h2>
+  <div class="two-col" style="margin-bottom:20px">
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:16px">目标方案：3,000㎡ 操作 + 130万只库存</div>
+      <div class="space-card">
+        <div class="space-title">操作区</div>
+        <div class="space-row"><span>面积</span><span>3,000 ㎡</span></div>
+        <div class="space-row"><span>日处理能力</span><span>~16,700 单/天</span></div>
+        <div class="space-row"><span>月发货能力</span><span>~33.3 万单</span></div>
+      </div>
+      <div class="space-card">
+        <div class="space-title">库存区</div>
+        <div class="space-row"><span>库存容量</span><span>130 万只</span></div>
+        <div class="space-row"><span>月出库 33.3万</span><span>周转 ~3.9 个月</span></div>
+        <div class="space-row"><span>SKU 覆盖</span><span>全品类</span></div>
+      </div>
+      <div style="margin-top:12px;padding:.8rem;background:rgba(34,197,94,.08);border-left:3px solid var(--green);border-radius:0">
+        <div style="font-size:.78rem;font-weight:500;color:var(--green)">满足400万单/年全量发货需求</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:.85rem;font-weight:500;margin-bottom:16px">过渡方案：3,000㎡ 操作 + 50万只库存</div>
+      <div class="space-card">
+        <div class="space-title">操作区</div>
+        <div class="space-row"><span>面积</span><span>3,000 ㎡</span></div>
+        <div class="space-row"><span>日处理能力</span><span>~16,700 单/天</span></div>
+        <div class="space-row"><span>月发货能力</span><span>~33.3 万单</span></div>
+      </div>
+      <div class="space-card">
+        <div class="space-title">库存区</div>
+        <div class="space-row"><span>库存容量</span><span>50 万只</span></div>
+        <div class="space-row"><span>月出库 33.3万</span><span>周转 ~1.5 个月</span></div>
+        <div class="space-row"><span>补货频率</span><span>高频小批量</span></div>
+      </div>
+      <div style="margin-top:12px;padding:.8rem;background:rgba(245,158,11,.08);border-left:3px solid var(--amber);border-radius:0">
+        <div style="font-size:.78rem;font-weight:500;color:var(--amber)">过渡期方案，需供应商配合高频补货</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div style="font-size:.85rem;font-weight:500;margin-bottom:12px">实施路线图</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-phase">PHASE 1</div>
+        <div class="tl-title">场地准备 & 签约</div>
+        <div class="tl-desc">永康3,000㎡场地签约<br>快递集中谈判 ¥1.9/单<br>WMS系统对接<br>预充值50万到账</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">PHASE 2</div>
+        <div class="tl-title">过渡期运行</div>
+        <div class="tl-desc">50万只库存试运行<br>供应商高频补货磨合<br>临安逐步缩量<br>月发货冲25万单</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">PHASE 3</div>
+        <div class="tl-title">全量切换</div>
+        <div class="tl-desc">库存扩至130万只<br>临安仓关闭/转型<br>全量永康发货<br>快递价格锁定</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">PHASE 4</div>
+        <div class="tl-title">稳态运营</div>
+        <div class="tl-desc">400万单/年稳定运行<br>持续快递议价优化<br>库存周转精细管理<br>年度节省¥662万</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:20px">
+      <div style="flex:1">
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">决策建议</div>
+        <div style="font-size:.85rem;color:var(--text2);line-height:1.7">
+          建议采用<strong style="color:var(--green)">模式三 · 永康集中发货</strong>，以过渡方案（3,000㎡ + 50万只）快速启动，
+          验证后扩展至目标方案（130万只），实现年度物流总成本从 ¥1,762万 降至 ¥1,100万，
+          <strong style="color:var(--green)">年节省 ¥662万，降幅 37.6%</strong>。
+          永康方案同时享有产业带集群供应商近距离优势（售后可抵扣货款）和电商物流时效优势。
+        </div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;padding:1.5rem 2rem;background:rgba(34,197,94,.08);border-radius:var(--r);border:1px solid rgba(34,197,94,.2)">
+        <div style="font-family:var(--num);font-size:2.5rem;font-weight:700;color:var(--green)">-37.6%</div>
+        <div style="font-size:.78rem;color:var(--green);font-weight:500">年度物流成本降幅</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    注：① 两地比例按2025年实际永康58.5%/临安41.5%测算；② 模式一仓储费、调拨费按2025年实际 × 2（单量翻倍）估算；③ 临安操作费 ¥1.05/单 为2025年自营仓人工实际均摊；④ 模式二物流溢价按90%货品来自永康供应商计算；⑤ 模式二、三快递报价基于月均25万单+预充50万的集中议价条件；⑥ 永康快递 ¥1.9/单 基于产业带电商集群优势。
+  </div>
+  <div class="page-num">06 / 06</div>
+</div>
+
+<script>
+const cGrid='rgba(255,255,255,0.05)',cTick='rgba(255,255,255,0.35)';
+Chart.defaults.color=cTick;Chart.defaults.borderColor=cGrid;
+
+new Chart(document.getElementById('pie1'),{type:'doughnut',data:{labels:['永康云仓快递费','永康云仓操作费','临安自营快递费','临安自营操作费','仓储费','调拨费','物流溢价'],datasets:[{data:[331.0,124.4,257.8,83.8,23.7,10.6,5.0],backgroundColor:['#3b82f6','#818cf8','#f59e0b','#fbbf24','#a78bfa','#ef4444','#14b8a6'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{boxWidth:10,padding:8,font:{size:11},color:'#8a8d95'}},tooltip:{callbacks:{label:ctx=>ctx.label+': ¥'+ctx.parsed+'万'}}}}});
+
+new Chart(document.getElementById('bar1'),{type:'bar',data:{labels:['顺丰','中通','极兔','申通'],datasets:[{label:'快递费',data:[6.40,3.08,2.68,3.24],backgroundColor:'#3b82f6',borderRadius:3},{label:'操作费',data:[1.55,1.04,1.21,1.05],backgroundColor:'#a78bfa',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:11}}},y:{stacked:true,ticks:{callback:v=>'¥'+v,font:{size:10}},grid:{color:cGrid}}},plugins:{legend:{labels:{boxWidth:10,padding:12,font:{size:11},color:'#8a8d95'}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': ¥'+ctx.parsed.y.toFixed(2)}}}}});
+
+new Chart(document.getElementById('barExpress'),{type:'bar',data:{labels:['模式一 两地','模式二 临安','模式三 永康'],datasets:[{label:'快递费',data:[1225.7,920,760],backgroundColor:['#ef4444','#f59e0b','#22c55e'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{ticks:{callback:v=>v+'万',font:{size:10}},grid:{color:cGrid}},y:{grid:{display:false},ticks:{font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'¥'+ctx.parsed.x+'万'}}}}});
+
+new Chart(document.getElementById('barOp'),{type:'bar',data:{labels:['模式一 两地','模式二 临安','模式三 永康'],datasets:[{label:'操作费',data:[434.1,340,340],backgroundColor:['#ef4444','#f59e0b','#22c55e'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{ticks:{callback:v=>v+'万',font:{size:10}},grid:{color:cGrid}},y:{grid:{display:false},ticks:{font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'¥'+ctx.parsed.x+'万'}}}}});
+
+new Chart(document.getElementById('stackedUnit'),{type:'bar',data:{labels:['模式一 两地发货','模式二 集中临安','模式三 集中永康'],datasets:[{label:'快递费',data:[3.06,2.30,1.90],backgroundColor:'#3b82f6',borderRadius:2},{label:'操作费',data:[1.09,0.85,0.85],backgroundColor:'#a78bfa',borderRadius:2},{label:'物流溢价',data:[0.08,0.18,0],backgroundColor:'#14b8a6',borderRadius:2},{label:'仓储+调拨',data:[0.17,0,0],backgroundColor:'#f59e0b',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:11}}},y:{stacked:true,ticks:{callback:v=>'¥'+v.toFixed(1),font:{size:10}},grid:{color:cGrid},title:{display:true,text:'元/单',color:cTick,font:{size:11}}}},plugins:{legend:{labels:{boxWidth:10,padding:12,font:{size:11},color:'#8a8d95'}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': ¥'+ctx.parsed.y.toFixed(2)+'/单'}}}}});
+
+// === MONTHLY DASHBOARD CHARTS ===
+const mL=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const mTickets=[85896,86108,133649,158837,126452,125149,106740,176157,163426,213633,287148,256986];
+const mExpress=[310970,278348,395863,459560,361261,366737,319729,561392,505320,638922,920139,812800];
+const mOp=[56670,68782,82706,60241,70960,61092,92751,142697,124570,152701,199284,149308];
+const mDiaoboAmt=[12175,6495,3940,10934,4037,2972,3922,11001,12445,10232,9135,18507];
+const mDiaoboPcs=[3280,1803,420,1853,395,373,512,1419,2383,1330,1202,3482];
+const mStorage=[8836,0,5459,10885,14488,14010,17324,20202,26859,33679,42307,42814];
+
+new Chart(document.getElementById('mTicketExpress'),{type:'bar',data:{labels:mL,datasets:[
+  {type:'bar',label:'发货单量',data:mTickets,backgroundColor:'rgba(59,130,246,0.5)',borderRadius:3,yAxisID:'y',order:2},
+  {type:'line',label:'快递费',data:mExpress,borderColor:'#f59e0b',borderWidth:2,pointRadius:2,tension:.3,yAxisID:'y1',order:1},
+  {type:'line',label:'操作费',data:mOp,borderColor:'#a78bfa',borderWidth:2,pointRadius:2,tension:.3,yAxisID:'y1',order:0}
+]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{x:{grid:{display:false},ticks:{font:{size:10},autoSkip:false}},y:{position:'left',ticks:{callback:v=>(v/10000).toFixed(0)+'万',font:{size:10}},grid:{color:cGrid},title:{display:true,text:'单量',color:cTick,font:{size:10}}},y1:{position:'right',ticks:{callback:v=>(v/10000).toFixed(0)+'万',font:{size:10}},grid:{drawOnChartArea:false},title:{display:true,text:'金额（元）',color:cTick,font:{size:10}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.parsed.y>=10000?(ctx.parsed.y/10000).toFixed(1)+'万':ctx.parsed.y.toLocaleString())}}}}});
+
+new Chart(document.getElementById('mDiaobo'),{type:'bar',data:{labels:mL,datasets:[
+  {type:'bar',label:'调拨费',data:mDiaoboAmt,backgroundColor:'rgba(239,68,68,0.5)',borderRadius:3,yAxisID:'y'},
+  {type:'line',label:'调拨件数',data:mDiaoboPcs,borderColor:'#f59e0b',borderWidth:2,borderDash:[6,3],pointRadius:2,tension:.3,yAxisID:'y1'}
+]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{x:{grid:{display:false},ticks:{font:{size:10},autoSkip:false}},y:{position:'left',ticks:{callback:v=>v>=10000?(v/10000).toFixed(1)+'万':'¥'+v,font:{size:10}},grid:{color:cGrid}},y1:{position:'right',ticks:{font:{size:10}},grid:{drawOnChartArea:false},title:{display:true,text:'件数',color:cTick,font:{size:10}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()}}}}});
+
+new Chart(document.getElementById('mStorage'),{type:'line',data:{labels:mL,datasets:[
+  {label:'仓储费',data:mStorage,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.08)',fill:true,borderWidth:2,pointRadius:3,pointBackgroundColor:'#a78bfa',tension:.3}
+]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},autoSkip:false}},y:{ticks:{callback:v=>v>=10000?(v/10000).toFixed(1)+'万':'¥'+v,font:{size:10}},grid:{color:cGrid},title:{display:true,text:'元',color:cTick,font:{size:10}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'仓储费: ¥'+ctx.parsed.y.toLocaleString()}}}}});
+
+// Monthly table
+(function(){
+  const tb=document.getElementById('mTableBody');
+  const tf=document.getElementById('mTableFoot');
+  let tT=0,tE=0,tO=0,tD=0,tDP=0,tS=0,tAll=0;
+  mL.forEach((m,i)=>{
+    const total=mExpress[i]+mOp[i]+mDiaoboAmt[i]+mStorage[i];
+    tT+=mTickets[i];tE+=mExpress[i];tO+=mOp[i];tD+=mDiaoboAmt[i];tDP+=mDiaoboPcs[i];tS+=mStorage[i];tAll+=total;
+    const s=v=>v?v.toLocaleString():'—';
+    tb.innerHTML+=`<tr style="border-bottom:1px solid var(--border)">
+      <td style="text-align:left;padding:6px;font-family:var(--cn);font-weight:500;color:var(--text2)">${m}</td>
+      <td style="text-align:right;padding:6px">${s(mTickets[i])}</td>
+      <td style="text-align:right;padding:6px">${s(mExpress[i])}</td>
+      <td style="text-align:right;padding:6px">${s(mOp[i])}</td>
+      <td style="text-align:right;padding:6px">${s(mDiaoboAmt[i])}</td>
+      <td style="text-align:right;padding:6px">${s(mDiaoboPcs[i])}</td>
+      <td style="text-align:right;padding:6px">${mStorage[i]?s(mStorage[i]):'—'}</td>
+      <td style="text-align:right;padding:6px;color:var(--accent);font-weight:500">${s(Math.round(total))}</td>
+    </tr>`;
+  });
+  tf.innerHTML=`<tr style="border-top:2px solid var(--border)">
+    <td style="text-align:left;padding:8px 6px;font-family:var(--cn);font-weight:700">全年</td>
+    <td style="text-align:right;padding:8px 6px;font-weight:700">${tT.toLocaleString()}</td>
+    <td style="text-align:right;padding:8px 6px;font-weight:700">${tE.toLocaleString()}</td>
+    <td style="text-align:right;padding:8px 6px;font-weight:700">${tO.toLocaleString()}</td>
+    <td style="text-align:right;padding:8px 6px;font-weight:700">${tD.toLocaleString()}</td>
+    <td style="text-align:right;padding:8px 6px;font-weight:700">${tDP.toLocaleString()}</td>
+    <td style="text-align:right;padding:8px 6px;font-weight:700">${tS.toLocaleString()}</td>
+    <td style="text-align:right;padding:8px 6px;font-weight:700;color:var(--accent)">${Math.round(tAll).toLocaleString()}</td>
+  </tr>`;
+})();
+</script>
+</body>
+</html>
